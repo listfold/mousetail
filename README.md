@@ -1,4 +1,4 @@
-# The simplest and most stable Anki MCP Server
+# The simplest and most stable Anki MCP Server.
 
 Selectively commit what you learn in conversation with an LLM to memory using Anki - a flashcard learning system.
 
