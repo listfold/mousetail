@@ -49,34 +49,6 @@ wheels = [
 ]
 
 [[package]]
-name = "ankimcp"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "anki" },
-    { name = "mcp" },
-]
-
-[package.optional-dependencies]
-docs = [
-    { name = "furo" },
-    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "sphinx", version = "8.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "sphinx-autodoc-typehints", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "sphinx-autodoc-typehints", version = "3.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "anki", specifier = ">=25.9.2" },
-    { name = "furo", marker = "extra == 'docs'", specifier = ">=2024.0.0" },
-    { name = "mcp", specifier = ">=1.21.0" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
-    { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'", specifier = ">=2.0.0" },
-]
-provides-extras = ["docs"]
-
-[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -672,6 +644,34 @@ sdist = { url = "https://files.pythonhosted.org/packages/33/54/dd2330ef4611c27ae
 wheels = [
     { url = "https://files.pythonhosted.org/packages/39/47/850b6edc96c03bd44b00de9a0ca3c1cc71e0ba1cd5822955bc9e4eb3fad3/mcp-1.21.0-py3-none-any.whl", hash = "sha256:598619e53eb0b7a6513db38c426b28a4bdf57496fed04332100d2c56acade98b", size = 173672 },
 ]
+
+[[package]]
+name = "mousetail"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "anki" },
+    { name = "mcp" },
+]
+
+[package.optional-dependencies]
+docs = [
+    { name = "furo" },
+    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "sphinx", version = "8.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "sphinx-autodoc-typehints", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "sphinx-autodoc-typehints", version = "3.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "anki", specifier = ">=25.9.2" },
+    { name = "furo", marker = "extra == 'docs'", specifier = ">=2024.0.0" },
+    { name = "mcp", specifier = ">=1.21.0" },
+    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
+    { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'", specifier = ">=2.0.0" },
+]
+provides-extras = ["docs"]
 
 [[package]]
 name = "orjson"
