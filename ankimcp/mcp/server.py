@@ -1,4 +1,9 @@
-"""MCP Server implementation for Anki."""
+"""MCP Server implementation for Anki.
+
+This module provides the main MCP (Model Context Protocol) server implementation
+that exposes Anki functionality to LLMs like Claude. It handles tool registration,
+request routing, and response formatting.
+"""
 
 import logging
 from typing import Any
@@ -23,19 +28,47 @@ logger = logging.getLogger(__name__)
 
 
 class AnkiMCPServer:
-    """MCP Server for Anki operations."""
+    """MCP Server for Anki operations.
+
+    This class implements the Model Context Protocol server that provides
+    LLMs with access to Anki collections. It manages tool definitions,
+    handles incoming requests, and coordinates with the CollectionManager
+    to perform operations on Anki databases.
+
+    Attributes:
+        server: The underlying MCP Server instance.
+        manager: CollectionManager instance for database operations.
+
+    Example:
+        >>> server = AnkiMCPServer()
+        >>> mcp_server = server.get_server()
+    """
 
     def __init__(self):
+        """Initialize the Anki MCP server.
+
+        Creates a new MCP server instance named "anki-mcp" and sets up
+        all tool handlers for Anki operations.
+        """
         self.server = Server("anki-mcp")
         self.manager = get_manager()
         self._setup_handlers()
 
     def _setup_handlers(self):
-        """Setup MCP server handlers."""
+        """Setup MCP server handlers.
+
+        Registers the list_tools and call_tool handlers with the MCP server.
+        These handlers define the available operations and route requests
+        to the appropriate tool implementations.
+        """
 
         @self.server.list_tools()
         async def list_tools() -> list[Tool]:
-            """List available tools."""
+            """List available tools.
+
+            Returns:
+                List of Tool objects describing available Anki operations.
+            """
             return [
                 Tool(
                     name="list_collections",
@@ -212,7 +245,18 @@ class AnkiMCPServer:
 
         @self.server.call_tool()
         async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
-            """Handle tool calls."""
+            """Handle tool calls.
+
+            Routes incoming tool requests to the appropriate implementation
+            and returns formatted results.
+
+            Args:
+                name: Name of the tool to execute.
+                arguments: Dictionary of arguments for the tool.
+
+            Returns:
+                List containing a TextContent object with the result.
+            """
             try:
                 logger.info(f"Tool called: {name} with args: {arguments}")
 
@@ -276,5 +320,9 @@ class AnkiMCPServer:
                 )]
 
     def get_server(self) -> Server:
-        """Get the MCP server instance."""
+        """Get the MCP server instance.
+
+        Returns:
+            The configured MCP Server instance ready for use.
+        """
         return self.server

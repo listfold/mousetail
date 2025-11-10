@@ -8,11 +8,19 @@ dependencies = [
     "anki>=25.9.2",
     "mcp>=1.21.0",
 ]
+
 authors = [
-    { name = "Iain Land" }
+    { name = "Iain Maitland" }
 ]
 license = { text = "MIT" }
 keywords = ["anki", "mcp", "model-context-protocol", "llm", "claude", "flashcards", "spaced-repetition"]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7.0.0",
+    "furo>=2024.0.0",
+    "sphinx-autodoc-typehints>=2.0.0",
+]
 
 [project.urls]
 Homepage = "https://listfold.github.io/ankimcp/"

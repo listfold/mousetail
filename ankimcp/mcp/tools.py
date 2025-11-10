@@ -1,4 +1,9 @@
-"""Tool implementations for MCP server."""
+"""Tool implementations for MCP server.
+
+This module contains the actual implementation of each MCP tool exposed
+by the Anki MCP server. Each function corresponds to a tool that LLMs
+can call to interact with Anki collections.
+"""
 
 import json
 from typing import Optional
@@ -6,7 +11,14 @@ from ankimcp.server.collection_manager import get_manager
 
 
 async def list_collections_tool() -> dict:
-    """List all available Anki collections."""
+    """List all available Anki collections.
+
+    Scans the system for Anki profile directories and returns information
+    about all discovered collections.
+
+    Returns:
+        Dict with 'collections' (list of collection info) and 'count' (int).
+    """
     manager = get_manager()
     collections = manager.list_available_collections()
     return {
@@ -16,7 +28,14 @@ async def list_collections_tool() -> dict:
 
 
 async def get_collection_info_tool(collection_path: Optional[str] = None) -> dict:
-    """Get information about a collection."""
+    """Get information about a collection.
+
+    Args:
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'collection' (info dict) or 'error' (str).
+    """
     manager = get_manager()
     try:
         info = manager.get_collection_info(collection_path)
@@ -32,7 +51,14 @@ async def get_collection_info_tool(collection_path: Optional[str] = None) -> dic
 
 
 async def list_decks_tool(collection_path: Optional[str] = None) -> dict:
-    """List all decks in the collection."""
+    """List all decks in the collection.
+
+    Args:
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'decks' (list), 'count' (int) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:
@@ -56,7 +82,15 @@ async def list_decks_tool(collection_path: Optional[str] = None) -> dict:
 
 
 async def create_deck_tool(deck_name: str, collection_path: Optional[str] = None) -> dict:
-    """Create a new deck."""
+    """Create a new deck.
+
+    Args:
+        deck_name: Name for the new deck.
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str), 'deck_id' (int) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:
@@ -74,7 +108,14 @@ async def create_deck_tool(deck_name: str, collection_path: Optional[str] = None
 
 
 async def list_note_types_tool(collection_path: Optional[str] = None) -> dict:
-    """List all note types in the collection."""
+    """List all note types in the collection.
+
+    Args:
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'note_types' (list with id, name, fields), 'count' (int) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:
@@ -109,7 +150,18 @@ async def create_note_tool(
     tags: list[str] = None,
     collection_path: Optional[str] = None
 ) -> dict:
-    """Create a new note."""
+    """Create a new note (flashcard).
+
+    Args:
+        deck_name: Name of the deck where the note will be added.
+        note_type_name: Name of the note type (e.g., 'Basic', 'Cloze').
+        fields: Dictionary mapping field names to values (e.g., {'Front': 'Question', 'Back': 'Answer'}).
+        tags: Optional list of tags to add to the note.
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str), 'note_id' (int), 'card_count' (int) or 'error' (str).
+    """
     manager = get_manager()
     if tags is None:
         tags = []
@@ -174,7 +226,16 @@ async def search_notes_tool(
     limit: int = 100,
     collection_path: Optional[str] = None
 ) -> dict:
-    """Search for notes."""
+    """Search for notes using Anki search syntax.
+
+    Args:
+        query: Anki search query (e.g., 'deck:MyDeck', 'tag:important', 'front:*python*').
+        limit: Maximum number of results to return. Default is 100.
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'note_ids' (list), 'count' (int), 'query' (str) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:
@@ -198,7 +259,15 @@ async def search_notes_tool(
 
 
 async def get_note_tool(note_id: int, collection_path: Optional[str] = None) -> dict:
-    """Get information about a note."""
+    """Get detailed information about a specific note.
+
+    Args:
+        note_id: ID of the note to retrieve.
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'note' (dict with id, fields, tags, etc.) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:
@@ -244,7 +313,17 @@ async def update_note_tool(
     tags: Optional[list[str]] = None,
     collection_path: Optional[str] = None
 ) -> dict:
-    """Update a note."""
+    """Update an existing note's fields and/or tags.
+
+    Args:
+        note_id: ID of the note to update.
+        fields: Optional dictionary mapping field names to new values.
+        tags: Optional list of tags (replaces all existing tags).
+        collection_path: Path to the collection file. If None, uses the default collection.
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str) or 'error' (str).
+    """
     manager = get_manager()
     try:
         with manager.get_collection(collection_path) as col:

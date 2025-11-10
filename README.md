@@ -254,6 +254,29 @@ uv run python -m ankimcp.mcp.stdio_server
 
 The server communicates via stdin/stdout using the MCP protocol.
 
+### Building Documentation
+
+The project uses Sphinx with the Furo theme to generate documentation from Python docstrings.
+
+1. **Install documentation dependencies:**
+   ```bash
+   uv pip install ".[docs]"
+   ```
+
+2. **Build the documentation:**
+   ```bash
+   uv run python -m sphinx -b html docs docs/_build/html
+   ```
+
+3. **View the documentation:**
+   ```bash
+   open docs/_build/html/index.html  # macOS
+   xdg-open docs/_build/html/index.html  # Linux
+   start docs/_build/html/index.html  # Windows
+   ```
+
+The documentation is automatically built and deployed to GitHub Pages on every push to the main branch.
+
 
 ## Architecture
 
