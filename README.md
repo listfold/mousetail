@@ -57,29 +57,30 @@ uv run python test_server.py
 
 Claude Code is the CLI tool you're using right now. To add this MCP server:
 
-1. **Use the `/mcp` command:**
-```
-/mcp add anki
-```
+1. **Add the MCP server with user scope (available globally):**
+   ```bash
+   claude mcp add --transport stdio --scope user anki -- uv --directory /absolute/path/to/ankimcp run python -m ankimcp.mcp.stdio_server
+   ```
 
-2. **When prompted, provide the command:**
-```
-uv run python -m ankimcp.mcp.stdio_server
-```
+   Replace `/absolute/path/to/ankimcp` with the actual path to this directory.
 
-3. **When prompted for the working directory:**
-```
-/Users/yourusername/Projects/ankimcp
-```
-(Use the absolute path to this directory)
+   **Flags explained:**
+   - `--transport stdio`: Specifies stdio communication
+   - `--scope user`: Makes the server available in all Claude Code sessions (not just current project)
+   - `--`: Separates Claude Code flags from the server command
 
-4. **Start using it immediately:**
-```
-"List my Anki decks"
-"Create a flashcard in my Spanish deck"
-```
+2. **Verify it's configured:**
+   ```bash
+   claude mcp list
+   ```
 
-That's it! Claude Code will now have access to your Anki collections.
+3. **Start using it in any Claude Code session:**
+   ```
+   "List my Anki decks"
+   "Create a flashcard in my Spanish deck"
+   ```
+
+That's it! Claude Code will now have access to your Anki collections across all sessions.
 
 ### Option 2: Claude Desktop (GUI App)
 
