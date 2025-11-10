@@ -19,27 +19,9 @@ Selectively commit what you learn in conversation with an LLM to memory using An
 ### Prerequisites
 
 - Python 3.10 or higher
-- [UV](https://github.com/astral-sh/uv) package manager
-- Anki 2.1.50+ installed. 
+- [UV](https://github.com/astral-sh/uv) package manager (recommended) or pip
+- Anki 2.1.50+ installed.
 - **Note:** Anki application should be closed when using the MCP server.
-
-### Setup
-
-1. **Clone the repository:**
-```bash
-git clone https://github.com/listfold/mousetail.git
-cd mousetail
-```
-
-2. **Install dependencies:**
-```bash
-uv sync
-```
-
-4. **Run**
-```bash
-run python -m mousetail.mcp.stdio_server
-```
 
 ## Usage
 
@@ -47,15 +29,15 @@ run python -m mousetail.mcp.stdio_server
 
 1. **Add the MCP server with user scope (available globally):**
    ```bash
-   claude mcp add --transport stdio --scope user anki -- uv --directory /absolute/path/to/mousetail run python -m mousetail.mcp.stdio_server
+   claude mcp add --transport stdio --scope user anki -- uvx mousetail
    ```
-
-   Replace `/absolute/path/to/mousetail` with the actual path to this directory.
 
    **Flags explained:**
    - `--transport stdio`: Specifies stdio communication
    - `--scope user`: Makes the server available in all Claude Code sessions (not just current project)
+   - `anki`: The name you want to give this MCP server
    - `--`: Separates Claude Code flags from the server command
+   - `uvx mousetail`: Runs the mousetail package from PyPI using uvx
 
 2. **Verify it's configured:**
    ```bash
@@ -70,13 +52,17 @@ run python -m mousetail.mcp.stdio_server
 
 That's it! Claude Code will now have access to your Anki collections across all sessions.
 
-### Option 2: Claude Desktop (GUI App)
+**Note:** If you prefer to use pip instead of uvx, you can install with `pip install mousetail` and then add the server with:
+```bash
+claude mcp add --transport stdio --scope user anki -- python -m mousetail.mcp.stdio_server
+```
+
+### Claude Desktop (GUI App)
 
 For the Claude Desktop application:
 
-1. **Configure Claude Desktop**
+1. **Edit your Claude Desktop configuration file:**
 
-   Edit your Claude Desktop configuration file:
    - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
    - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
    - **Linux:** `~/.config/Claude/claude_desktop_config.json`
@@ -87,20 +73,12 @@ For the Claude Desktop application:
    {
      "mcpServers": {
        "anki": {
-         "command": "uv",
-         "args": [
-           "run",
-           "python",
-           "-m",
-           "mousetail.mcp.stdio_server"
-         ],
-         "cwd": "/absolute/path/to/mousetail"
+         "command": "uvx",
+         "args": ["mousetail"]
        }
      }
    }
    ```
-
-   Replace `/absolute/path/to/mousetail` with the actual path to this directory.
 
 3. **Restart Claude Desktop**
 
