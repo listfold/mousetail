@@ -1,0 +1,287 @@
+"""Tool implementations for MCP server."""
+
+import json
+from typing import Optional
+from ankimcp.server.collection_manager import get_manager
+
+
+async def list_collections_tool() -> dict:
+    """List all available Anki collections."""
+    manager = get_manager()
+    collections = manager.list_available_collections()
+    return {
+        "collections": collections,
+        "count": len(collections)
+    }
+
+
+async def get_collection_info_tool(collection_path: Optional[str] = None) -> dict:
+    """Get information about a collection."""
+    manager = get_manager()
+    try:
+        info = manager.get_collection_info(collection_path)
+        return {
+            "success": True,
+            "collection": info
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def list_decks_tool(collection_path: Optional[str] = None) -> dict:
+    """List all decks in the collection."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            decks = []
+            for name, did in col.decks.all_names_and_ids():
+                decks.append({
+                    "id": did,
+                    "name": name
+                })
+
+            return {
+                "success": True,
+                "decks": decks,
+                "count": len(decks)
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def create_deck_tool(deck_name: str, collection_path: Optional[str] = None) -> dict:
+    """Create a new deck."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            deck_id = col.decks.add_normal_deck_with_name(deck_name).id
+            return {
+                "success": True,
+                "message": f"Deck '{deck_name}' created successfully",
+                "deck_id": deck_id
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def list_note_types_tool(collection_path: Optional[str] = None) -> dict:
+    """List all note types in the collection."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            note_types = []
+            for name, ntid in col.models.all_names_and_ids():
+                # Get full note type to include field information
+                notetype = col.models.get(ntid)
+                fields = [field['name'] for field in notetype['flds']]
+
+                note_types.append({
+                    "id": ntid,
+                    "name": name,
+                    "fields": fields
+                })
+
+            return {
+                "success": True,
+                "note_types": note_types,
+                "count": len(note_types)
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def create_note_tool(
+    deck_name: str,
+    note_type_name: str,
+    fields: dict[str, str],
+    tags: list[str] = None,
+    collection_path: Optional[str] = None
+) -> dict:
+    """Create a new note."""
+    manager = get_manager()
+    if tags is None:
+        tags = []
+
+    try:
+        with manager.get_collection(collection_path) as col:
+            # Get note type
+            notetype = col.models.by_name(note_type_name)
+            if not notetype:
+                return {
+                    "success": False,
+                    "error": f"Note type '{note_type_name}' not found",
+                    "available_note_types": [name for name, _ in col.models.all_names_and_ids()]
+                }
+
+            # Get deck
+            deck_id = col.decks.id_for_name(deck_name)
+            if not deck_id:
+                return {
+                    "success": False,
+                    "error": f"Deck '{deck_name}' not found",
+                    "available_decks": [name for name, _ in col.decks.all_names_and_ids()]
+                }
+
+            # Create note
+            note = col.new_note(notetype)
+
+            # Set fields
+            for field_name, value in fields.items():
+                try:
+                    note[field_name] = value
+                except KeyError:
+                    available_fields = [field['name'] for field in notetype['flds']]
+                    return {
+                        "success": False,
+                        "error": f"Field '{field_name}' not found in note type '{note_type_name}'",
+                        "available_fields": available_fields
+                    }
+
+            # Set tags
+            for tag in tags:
+                note.add_tag(tag)
+
+            # Add to collection
+            col.add_note(note, deck_id)
+
+            return {
+                "success": True,
+                "message": f"Note created successfully in deck '{deck_name}'",
+                "note_id": note.id,
+                "card_count": len(note.cards())
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def search_notes_tool(
+    query: str,
+    limit: int = 100,
+    collection_path: Optional[str] = None
+) -> dict:
+    """Search for notes."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            note_ids = col.find_notes(query)
+
+            # Apply limit
+            if limit and limit > 0:
+                note_ids = note_ids[:limit]
+
+            return {
+                "success": True,
+                "note_ids": note_ids,
+                "count": len(note_ids),
+                "query": query
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def get_note_tool(note_id: int, collection_path: Optional[str] = None) -> dict:
+    """Get information about a note."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            note = col.get_note(note_id)
+
+            # Get note type
+            notetype = note.note_type()
+
+            # Build fields dictionary
+            fields = {}
+            for i, field_name in enumerate(col.models.field_names(notetype)):
+                fields[field_name] = note.fields[i] if i < len(note.fields) else ""
+
+            # Get card info
+            cards = note.cards()
+            deck_id = cards[0].did if cards else None
+            deck_name = col.decks.get(deck_id)['name'] if deck_id else None
+
+            return {
+                "success": True,
+                "note": {
+                    "id": note.id,
+                    "guid": note.guid,
+                    "note_type_id": note.mid,
+                    "note_type_name": notetype['name'],
+                    "deck_id": deck_id,
+                    "deck_name": deck_name,
+                    "fields": fields,
+                    "tags": note.tags,
+                    "card_ids": [card.id for card in cards]
+                }
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+async def update_note_tool(
+    note_id: int,
+    fields: Optional[dict[str, str]] = None,
+    tags: Optional[list[str]] = None,
+    collection_path: Optional[str] = None
+) -> dict:
+    """Update a note."""
+    manager = get_manager()
+    try:
+        with manager.get_collection(collection_path) as col:
+            note = col.get_note(note_id)
+
+            # Update fields if provided
+            if fields:
+                for field_name, value in fields.items():
+                    try:
+                        note[field_name] = value
+                    except KeyError:
+                        notetype = note.note_type()
+                        available_fields = [field['name'] for field in notetype['flds']]
+                        return {
+                            "success": False,
+                            "error": f"Field '{field_name}' not found",
+                            "available_fields": available_fields
+                        }
+
+            # Update tags if provided
+            if tags is not None:
+                # Clear existing tags
+                for tag in list(note.tags):
+                    note.remove_tag(tag)
+                # Add new tags
+                for tag in tags:
+                    note.add_tag(tag)
+
+            # Save changes
+            col.update_note(note)
+
+            return {
+                "success": True,
+                "message": "Note updated successfully"
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }

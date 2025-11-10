@@ -1,0 +1,10 @@
+{
+  "collection": {
+    "auto_open_default": true,
+    "default_path": null
+  },
+  "logging": {
+    "level": "INFO",
+    "file": null
+  }
+}
