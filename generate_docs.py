@@ -6,7 +6,7 @@ import json
 
 def main():
     """Extract tool definitions and generate documentation."""
-    # Tool definitions from ankimcp/mcp/server.py
+    # Tool definitions from mousetail/mcp/server.py
     tools_data = [
         {
             "name": "list_collections",

@@ -3,7 +3,7 @@ MCP Server
 
 The main MCP server implementation that exposes Anki functionality to LLMs.
 
-.. automodule:: ankimcp.mcp.server
+.. automodule:: mousetail.mcp.server
    :members:
    :undoc-members:
    :show-inheritance:
@@ -11,7 +11,7 @@ The main MCP server implementation that exposes Anki functionality to LLMs.
 AnkiMCPServer Class
 -------------------
 
-.. autoclass:: ankimcp.mcp.server.AnkiMCPServer
+.. autoclass:: mousetail.mcp.server.AnkiMCPServer
    :members:
    :undoc-members:
    :show-inheritance:

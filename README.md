@@ -6,7 +6,7 @@ Selectively commit what you learn in conversation with an LLM to memory using An
 [![MCP](https://img.shields.io/badge/MCP-1.21+-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-📚 **[View Full Documentation](https://listfold.github.io/ankimcp/)** - Interactive tool reference with all MCP tools and parameters
+📚 **[View Full Documentation](https://listfold.github.io/mousetail/)** - Interactive tool reference with all MCP tools and parameters
 
 ## Features
 - Supports a minimal set of core anki operations, (CRUD & search flashcards and collections)
@@ -27,8 +27,8 @@ Selectively commit what you learn in conversation with an LLM to memory using An
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/listfold/ankimcp.git
-cd ankimcp
+git clone https://github.com/listfold/mousetail.git
+cd mousetail
 ```
 
 2. **Install dependencies:**
@@ -38,7 +38,7 @@ uv sync
 
 4. **Run**
 ```bash
-run python -m ankimcp.mcp.stdio_server
+run python -m mousetail.mcp.stdio_server
 ```
 
 ## Usage
@@ -47,10 +47,10 @@ run python -m ankimcp.mcp.stdio_server
 
 1. **Add the MCP server with user scope (available globally):**
    ```bash
-   claude mcp add --transport stdio --scope user anki -- uv --directory /absolute/path/to/ankimcp run python -m ankimcp.mcp.stdio_server
+   claude mcp add --transport stdio --scope user anki -- uv --directory /absolute/path/to/mousetail run python -m mousetail.mcp.stdio_server
    ```
 
-   Replace `/absolute/path/to/ankimcp` with the actual path to this directory.
+   Replace `/absolute/path/to/mousetail` with the actual path to this directory.
 
    **Flags explained:**
    - `--transport stdio`: Specifies stdio communication
@@ -92,15 +92,15 @@ For the Claude Desktop application:
            "run",
            "python",
            "-m",
-           "ankimcp.mcp.stdio_server"
+           "mousetail.mcp.stdio_server"
          ],
-         "cwd": "/absolute/path/to/ankimcp"
+         "cwd": "/absolute/path/to/mousetail"
        }
      }
    }
    ```
 
-   Replace `/absolute/path/to/ankimcp` with the actual path to this directory.
+   Replace `/absolute/path/to/mousetail` with the actual path to this directory.
 
 3. **Restart Claude Desktop**
 

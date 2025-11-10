@@ -4,7 +4,7 @@ import asyncio
 import logging
 from mcp.server.stdio import stdio_server
 
-from ankimcp.mcp.server import AnkiMCPServer
+from mousetail.mcp.server import AnkiMCPServer
 
 
 logging.basicConfig(level=logging.INFO)

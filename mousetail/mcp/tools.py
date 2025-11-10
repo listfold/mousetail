@@ -7,7 +7,7 @@ can call to interact with Anki collections.
 
 import json
 from typing import Optional
-from ankimcp.server.collection_manager import get_manager
+from mousetail.server.collection_manager import get_manager
 
 
 async def list_collections_tool() -> dict:

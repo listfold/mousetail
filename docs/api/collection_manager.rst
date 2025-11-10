@@ -3,7 +3,7 @@ Collection Manager
 
 Manages Anki collection lifecycle and provides thread-safe access.
 
-.. automodule:: ankimcp.server.collection_manager
+.. automodule:: mousetail.server.collection_manager
    :members:
    :undoc-members:
    :show-inheritance:
@@ -11,7 +11,7 @@ Manages Anki collection lifecycle and provides thread-safe access.
 CollectionManager Class
 -----------------------
 
-.. autoclass:: ankimcp.server.collection_manager.CollectionManager
+.. autoclass:: mousetail.server.collection_manager.CollectionManager
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,4 +20,4 @@ CollectionManager Class
 Global Manager Function
 -----------------------
 
-.. autofunction:: ankimcp.server.collection_manager.get_manager
+.. autofunction:: mousetail.server.collection_manager.get_manager

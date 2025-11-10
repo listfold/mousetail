@@ -1,12 +1,12 @@
-AnkiMCP Documentation
-=====================
+Mousetail Documentation
+=======================
 
-AnkiMCP is a standalone MCP (Model Context Protocol) server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library.
+Mousetail is a standalone MCP (Model Context Protocol) server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library.
 
 Quick Start
 -----------
 
-For installation and usage instructions, see the `README <https://github.com/listfold/ankimcp/blob/main/README.md>`_.
+For installation and usage instructions, see the `README <https://github.com/listfold/mousetail/blob/main/README.md>`_.
 
 API Reference
 -------------

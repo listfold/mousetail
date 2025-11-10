@@ -12,8 +12,8 @@ Get up and running with Anki MCP Server in 2 minutes.
 
 ```bash
 # Clone the repository
-git clone https://github.com/listfold/ankimcp.git
-cd ankimcp
+git clone https://github.com/listfold/mousetail.git
+cd mousetail
 
 # Install dependencies
 uv sync
@@ -33,8 +33,8 @@ You should see ✓ All tests passed!
 ```
 
 When prompted:
-- **Command:** `uv run python -m ankimcp.mcp.stdio_server`
-- **Working directory:** `/Users/yourusername/Projects/ankimcp` (use your actual path)
+- **Command:** `uv run python -m mousetail.mcp.stdio_server`
+- **Working directory:** `/Users/yourusername/Projects/mousetail` (use your actual path)
 
 That's it! You can now use it:
 
@@ -57,8 +57,8 @@ That's it! You can now use it:
      "mcpServers": {
        "anki": {
          "command": "uv",
-         "args": ["run", "python", "-m", "ankimcp.mcp.stdio_server"],
-         "cwd": "/absolute/path/to/ankimcp"
+         "args": ["run", "python", "-m", "mousetail.mcp.stdio_server"],
+         "cwd": "/absolute/path/to/mousetail"
        }
      }
    }
@@ -115,7 +115,7 @@ Tags: greetings, basics"
 
 ### Claude Code can't find the server
 - Use absolute path in working directory
-- Run `pwd` in the ankimcp folder to get the full path
+- Run `pwd` in the mousetail folder to get the full path
 
 ## What's Available?
 

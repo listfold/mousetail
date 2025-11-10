@@ -1,5 +1,5 @@
 [project]
-name = "ankimcp"
+name = "mousetail"
 version = "0.1.0"
 description = "Standalone MCP server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library"
 readme = "README.md"
@@ -23,17 +23,17 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://listfold.github.io/ankimcp/"
-Repository = "https://github.com/listfold/ankimcp"
-Documentation = "https://listfold.github.io/ankimcp/"
-Issues = "https://github.com/listfold/ankimcp/issues"
+Homepage = "https://listfold.github.io/mousetail/"
+Repository = "https://github.com/listfold/mousetail"
+Documentation = "https://listfold.github.io/mousetail/"
+Issues = "https://github.com/listfold/mousetail/issues"
 
 [project.scripts]
-ankimcp = "ankimcp.mcp.stdio_server:main"
+mousetail = "mousetail.mcp.stdio_server:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatchling.build.targets.wheel]
-packages = ["ankimcp"]
+packages = ["mousetail"]

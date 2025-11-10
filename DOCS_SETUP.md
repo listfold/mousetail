@@ -1,6 +1,6 @@
 # Documentation Setup
 
-This document describes the Sphinx documentation setup for AnkiMCP.
+This document describes the Sphinx documentation setup for Mousetail.
 
 ## What's Been Set Up
 
@@ -33,9 +33,9 @@ docs/
 ### 3. Enhanced Docstrings
 
 All Python modules now have comprehensive docstrings following Google style:
-- `ankimcp/mcp/server.py` - MCP server implementation
-- `ankimcp/mcp/tools.py` - Tool implementations
-- `ankimcp/server/collection_manager.py` - Collection management
+- `mousetail/mcp/server.py` - MCP server implementation
+- `mousetail/mcp/tools.py` - Tool implementations
+- `mousetail/server/collection_manager.py` - Collection management
 
 Each function includes:
 - Summary description
@@ -99,7 +99,7 @@ When adding new Python modules:
    New Module
    ==========
 
-   .. automodule:: ankimcp.new_module
+   .. automodule:: mousetail.new_module
       :members:
       :undoc-members:
       :show-inheritance:
@@ -164,7 +164,7 @@ Documentation is automatically deployed via GitHub Actions:
 1. Push to main branch triggers the workflow
 2. Workflow builds Sphinx docs
 3. Generated HTML is deployed to GitHub Pages
-4. Accessible at: https://listfold.github.io/ankimcp/
+4. Accessible at: https://listfold.github.io/mousetail/
 
 ## Troubleshooting
 

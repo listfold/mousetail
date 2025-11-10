@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # Project information
-project = 'AnkiMCP'
+project = 'Mousetail'
 copyright = '2024, Iain Maitland'
 author = 'Iain Maitland'
 release = '0.1.0'
@@ -27,7 +27,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # HTML output options
 html_theme = 'furo'
 html_static_path = ['_static']
-html_title = 'AnkiMCP Documentation'
+html_title = 'Mousetail Documentation'
 
 html_theme_options = {
     "sidebar_hide_name": False,

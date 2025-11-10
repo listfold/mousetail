@@ -10,8 +10,8 @@ from typing import Any
 from mcp.server import Server
 from mcp.types import Tool, TextContent
 
-from ankimcp.server.collection_manager import get_manager
-from ankimcp.mcp.tools import (
+from mousetail.server.collection_manager import get_manager
+from mousetail.mcp.tools import (
     list_collections_tool,
     list_decks_tool,
     list_note_types_tool,

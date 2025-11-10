@@ -1,7 +1,7 @@
 API Reference
 =============
 
-This section contains the complete API reference for AnkiMCP.
+This section contains the complete API reference for Mousetail.
 
 .. toctree::
    :maxdepth: 2
@@ -13,8 +13,8 @@ This section contains the complete API reference for AnkiMCP.
 Overview
 --------
 
-The AnkiMCP API is organized into three main modules:
+The Mousetail API is organized into three main modules:
 
-- **server**: The main MCP server implementation (``ankimcp.mcp.server``)
-- **tools**: Individual tool implementations for each MCP operation (``ankimcp.mcp.tools``)
-- **collection_manager**: Collection lifecycle and access management (``ankimcp.server.collection_manager``)
+- **server**: The main MCP server implementation (``mousetail.mcp.server``)
+- **tools**: Individual tool implementations for each MCP operation (``mousetail.mcp.tools``)
+- **collection_manager**: Collection lifecycle and access management (``mousetail.server.collection_manager``)
