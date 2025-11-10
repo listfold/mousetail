@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Generated docs
+docs/tools.json

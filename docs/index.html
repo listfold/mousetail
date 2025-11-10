@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki MCP Server - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #c9d1d9;
+            background: #0d1117;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .badges {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .quick-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #58a6ff;
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 0.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: #161b22;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #58a6ff;
+        }
+
+        .feature-card p {
+            color: #8b949e;
+        }
+
+        .tools-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .tool-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.2s;
+        }
+
+        .tool-card:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #58a6ff;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .tool-description {
+            color: #c9d1d9;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .parameters {
+            background: #0d1117;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .parameters-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #f0883e;
+        }
+
+        .parameter {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .parameter:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .parameter-name {
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #79c0ff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .parameter-type {
+            display: inline-block;
+            background: #1f6feb;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .parameter-required {
+            display: inline-block;
+            background: #da3633;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+
+        .parameter-description {
+            color: #8b949e;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #c9d1d9;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #8b949e;
+            border-top: 1px solid #30363d;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #8b949e;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Anki MCP Server</h1>
+        <p>Selectively commit what you learn in conversation with an LLM to memory using a rigorous and proven learning framework</p>
+        <div class="badges">
+            <span class="badge">Python 3.10+</span>
+            <span class="badge">MCP 1.21+</span>
+            <span class="badge">MIT License</span>
+        </div>
+        <div class="quick-links">
+            <a href="https://github.com/listfold/ankimcp" class="quick-link">GitHub</a>
+            <a href="#features" class="quick-link">Features</a>
+            <a href="#tools" class="quick-link">MCP Tools</a>
+            <a href="#installation" class="quick-link">Installation</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="section" id="features">
+            <h2 class="section-title">Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3>Core Anki Operations</h3>
+                    <p>Full CRUD operations on flashcards and collections, with powerful search capabilities using Anki's native query syntax.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Zero Dependencies</h3>
+                    <p>Works directly with Anki's stable pylib. No additional dependencies to manage or worry about.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3>Thread-Safe</h3>
+                    <p>Safe concurrent access to Anki collections with proper locking mechanisms.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📡</span>
+                    <h3>Stdio Transport</h3>
+                    <p>Simple stdio-based communication - no HTTP ports or network configuration needed.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔌</span>
+                    <h3>Anki Addon</h3>
+                    <p>Can be installed as a native Anki addon for direct integration with your Anki installation.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <h3>Well Documented</h3>
+                    <p>Comprehensive documentation with examples for all features and use cases.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="tools">
+            <h2 class="section-title">MCP Tools</h2>
+            <div class="loading">Loading tools...</div>
+            <div class="tools-grid" style="display: none;"></div>
+        </section>
+
+        <section class="section" id="installation">
+            <h2 class="section-title">Installation</h2>
+            <div class="feature-card">
+                <h3>Prerequisites</h3>
+                <ul style="margin-left: 1.5rem; color: #8b949e; margin-top: 1rem;">
+                    <li>Python 3.10 or higher</li>
+                    <li>UV package manager</li>
+                    <li>Anki 2.1.50+ (optional, for addon mode)</li>
+                </ul>
+
+                <div class="code-block" style="margin-top: 1.5rem;">
+                    <pre># Clone and install
+git clone https://github.com/listfold/ankimcp.git
+cd ankimcp
+uv sync
+
+# Test
+uv run python test_server.py</pre>
+                </div>
+
+                <p style="margin-top: 1.5rem; color: #8b949e;">
+                    For detailed installation instructions including Claude Desktop and Claude Code integration,
+                    see the <a href="https://github.com/listfold/ankimcp" style="color: #58a6ff;">README</a>.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p style="margin-bottom: 1rem;">Built for the Anki and MCP community</p>
+        <p>
+            <a href="https://apps.ankiweb.net/">Anki</a> •
+            <a href="https://modelcontextprotocol.io/">MCP</a> •
+            <a href="https://github.com/astral-sh/uv">UV</a>
+        </p>
+    </footer>
+
+    <script>
+        // Load and render tools
+        fetch('tools.json')
+            .then(response => response.json())
+            .then(data => {
+                const toolsGrid = document.querySelector('.tools-grid');
+                const loading = document.querySelector('.loading');
+
+                loading.style.display = 'none';
+                toolsGrid.style.display = 'grid';
+
+                data.tools.forEach(tool => {
+                    const toolCard = document.createElement('div');
+                    toolCard.className = 'tool-card';
+
+                    let parametersHTML = '';
+                    const schema = tool.inputSchema;
+
+                    if (schema.properties && Object.keys(schema.properties).length > 0) {
+                        const params = Object.entries(schema.properties).map(([name, prop]) => {
+                            const isRequired = schema.required && schema.required.includes(name);
+                            const type = prop.type || 'string';
+                            const description = prop.description || '';
+
+                            return `
+                                <div class="parameter">
+                                    <div>
+                                        <span class="parameter-name">${name}</span>
+                                        <span class="parameter-type">${type}</span>
+                                        ${isRequired ? '<span class="parameter-required">required</span>' : ''}
+                                    </div>
+                                    ${description ? `<div class="parameter-description">${description}</div>` : ''}
+                                </div>
+                            `;
+                        }).join('');
+
+                        parametersHTML = `
+                            <div class="parameters">
+                                <div class="parameters-title">Parameters</div>
+                                ${params}
+                            </div>
+                        `;
+                    }
+
+                    toolCard.innerHTML = `
+                        <div class="tool-header">
+                            <div class="tool-name">${tool.name}</div>
+                        </div>
+                        <div class="tool-description">${tool.description}</div>
+                        ${parametersHTML}
+                    `;
+
+                    toolsGrid.appendChild(toolCard);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading tools:', error);
+                document.querySelector('.loading').innerHTML =
+                    '<p>Error loading tools. Please visit the <a href="https://github.com/listfold/ankimcp">GitHub repository</a>.</p>';
+            });
+    </script>
+</body>
+</html>

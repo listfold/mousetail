@@ -6,8 +6,13 @@ Selectively commit what you learn in conversation with an LLM to memory using a 
 [![MCP](https://img.shields.io/badge/MCP-1.21+-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An MCP (Model Context Protocol) server for Anki that enables LLMs like Claude to interact with your Anki flashcard collections.
-Installable as an Anki addon.
+A standalone MCP (Model Context Protocol) server that enables LLMs like Claude to interact with your Anki flashcard collections using Anki's Python library (pylib).
+
+📚 **[View Full Documentation](https://listfold.github.io/ankimcp/)** - Interactive tool reference with all MCP tools and parameters
+
+## How It Works
+
+This MCP server uses Anki's `pylib` (Python library) to directly access your Anki collection files (SQLite databases). It operates **independently of the Anki application** - in fact, Anki must be closed when using the MCP server to avoid database locking conflicts.
 
 ## Goal
 This is a tool that routes what you learn in conversation with an LLM to a robust and rigorous learning framework (anki).
@@ -25,7 +30,8 @@ This is a tool that routes what you learn in conversation with an LLM to a robus
 
 - Python 3.10 or higher
 - [UV](https://github.com/astral-sh/uv) package manager
-- Anki 2.1.50+ (optional, for addon mode)
+- Anki 2.1.50+ installed (to create collections)
+- **Note:** Anki application must be closed when using the MCP server
 
 ### Setup
 
@@ -183,40 +189,34 @@ Get detailed information about a specific note.
 Update an existing note's fields and/or tags.
 - **Parameters:** `note_id` (required), `fields` (optional), `tags` (optional), `collection_path` (optional)
 
-## Anki Addon Installation
+## Important Notes
 
-To install as an Anki addon:
+### Anki Must Be Closed
 
-1. **Copy to Anki addons folder:**
-   ```bash
-   # macOS
-   cp -r ankimcp ~/Library/Application\ Support/Anki2/addons21/
+The MCP server and Anki application both access the same SQLite database files directly. Because SQLite uses file-based locking, **you must close Anki before using the MCP server**. Attempting to use both simultaneously will result in "Collection is locked" errors.
 
-   # Linux
-   cp -r ankimcp ~/.local/share/Anki2/addons21/
+### How Collections Are Accessed
 
-   # Windows (PowerShell)
-   Copy-Item -Recurse ankimcp "$env:APPDATA\Anki2\addons21\"
-   ```
+The MCP server finds Anki collections at their standard locations:
+- **macOS:** `~/Library/Application Support/Anki2/[Profile]/collection.anki2`
+- **Linux:** `~/.local/share/Anki2/[Profile]/collection.anki2`
+- **Windows:** `%APPDATA%\Anki2\[Profile]\collection.anki2`
 
-2. **Restart Anki**
-
-3. **View info:**
-   - Go to Tools → Anki MCP Info
+You don't need to configure paths - the server automatically discovers available collections.
 
 ## Project Structure
 
 ```
 ankimcp/
-├── __init__.py              # Anki addon entry point
-├── manifest.json            # Addon metadata
-├── config.json             # Configuration
-├── server/
-│   └── collection_manager.py  # Collection lifecycle management
-└── mcp/
-    ├── server.py           # MCP server implementation
-    ├── tools.py            # MCP tool implementations
-    └── stdio_server.py     # stdio transport
+├── config.json              # Server configuration
+├── ankimcp/
+│   ├── server/
+│   │   └── collection_manager.py  # Collection lifecycle management
+│   └── mcp/
+│       ├── server.py        # MCP server implementation
+│       ├── tools.py         # MCP tool implementations
+│       └── stdio_server.py  # stdio transport entry point
+└── test_server.py          # Test script
 ```
 
 ## Configuration
@@ -253,21 +253,27 @@ uv run python -m ankimcp.mcp.stdio_server
 
 The server communicates via stdin/stdout using the MCP protocol.
 
+
 ## Architecture
 
 ```
 Claude Desktop / Claude Code / MCP Client
-        ↓ stdio
-    MCP Server
-        ↓ direct calls
-   Collection Manager
-        ↓
-    Anki pylib
-        ↓
-   Anki Collection (SQLite)
+        ↓ stdio (JSON-RPC)
+    MCP Server (this project)
+        ↓ Python API calls
+   Collection Manager (thread-safe wrapper)
+        ↓ Direct library calls
+    Anki pylib (Anki's Python library)
+        ↓ Rust backend
+   SQLite Database (collection.anki2 files)
 ```
 
-The server directly uses Anki's Python library (pylib) for all operations, it doesn't have any other dependencies.
+**Key Points:**
+- The MCP server is a standalone Python application
+- Uses Anki's `pylib` - the same library Anki desktop uses internally
+- No network communication - direct SQLite file access
+- Anki application does NOT need to be running (in fact, it must be closed)
+- No dependencies beyond `anki` and `mcp` Python packages
 
 ## Troubleshooting
 

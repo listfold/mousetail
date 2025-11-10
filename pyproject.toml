@@ -1,7 +1,8 @@
 [project]
 name = "ankimcp"
 version = "0.1.0"
-description = "MCP server for Anki - enables LLMs to interact with Anki collections"
+description = "Standalone MCP server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "anki>=25.9.2",
@@ -10,9 +11,14 @@ dependencies = [
 authors = [
     { name = "Iain Land" }
 ]
+license = { text = "MIT" }
+keywords = ["anki", "mcp", "model-context-protocol", "llm", "claude", "flashcards", "spaced-repetition"]
 
 [project.urls]
-Repository = "https://github.com/yourusername/ankimcp"
+Homepage = "https://listfold.github.io/ankimcp/"
+Repository = "https://github.com/listfold/ankimcp"
+Documentation = "https://listfold.github.io/ankimcp/"
+Issues = "https://github.com/listfold/ankimcp/issues"
 
 [project.scripts]
 ankimcp = "ankimcp.mcp.stdio_server:main"
