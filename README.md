@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="mousetail_transparent.png" alt="Mousetail Logo" width="200"/>
+  <img src="https://github.com/listfold/mousetail/blob/main/mousetail_transparent.png?raw=true" alt="Mousetail Logo" width="200"/>
 </div>
 
 # The simplest and most stable Anki MCP Server
