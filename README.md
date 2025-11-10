@@ -6,10 +6,10 @@ Selectively commit what you learn in conversation with an LLM to memory using An
 [![MCP](https://img.shields.io/badge/MCP-1.21+-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-📚 **[View Full Documentation](https://listfold.github.io/mousetail/)** - Interactive tool reference with all MCP tools and parameters
+**[API Documentation](https://listfold.github.io/mousetail/)** 
 
 ## Features
-- Supports a minimal set of core anki operations, (CRUD & search flashcards and collections)
+- Supports a minimal set of core anki operations, (CRUD & search flashcards and collections).
 - Zero dependencies, works directly with anki's fairly stable pylib api.
 - Doesn't require any addons, works with a basic anki installation.
 - Good documentation.
