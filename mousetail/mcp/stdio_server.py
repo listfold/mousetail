@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def main():
+async def async_main():
     """Run the MCP server with stdio transport."""
     logger.info("Starting Anki MCP Server with stdio transport")
 
@@ -26,5 +26,10 @@ async def main():
         )
 
 
+def main():
+    """Entry point for the mousetail script."""
+    asyncio.run(async_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
