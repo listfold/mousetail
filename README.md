@@ -1,4 +1,8 @@
-# The simplest and most stable Anki MCP Server.
+<div align="center">
+  <img src="mousetail_transparent.png" alt="Mousetail Logo" width="200"/>
+</div>
+
+# The simplest and most stable Anki MCP Server
 
 Selectively commit what you learn in conversation with an LLM to memory using Anki - a flashcard learning system.
 
