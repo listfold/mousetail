@@ -6,7 +6,7 @@ Mousetail Documentation
    :width: 200px
    :align: center
 
-Mousetail is a standalone MCP (Model Context Protocol) server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library.
+Mousetail is a standalone MCP (Model Context Protocol) server that enables LLMs to interact with Anki flashcard collections using Anki's Python library.
 
 Quick Start
 -----------

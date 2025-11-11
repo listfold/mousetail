@@ -17,7 +17,11 @@ Running the server is as simple as:
 uvx mousetail
 ```
 
-For detailed instructions on integrating with Claude Code, Claude Desktop, and other LLM tools, see the **[Usage Guide](https://listfold.github.io/mousetail/usage.html)**.
+For detailed instructions on integrating with Claude Code, Claude Desktop, and other LLM tools:
+
+**[Usage Guide](https://listfold.github.io/mousetail/usage.html)**.
+
+**[API Reference](https://listfold.github.io/mousetail/api/index.html)**
 
 ## Features
 - **Minimal** - supports core anki operations: create, read, update and delete
@@ -58,8 +62,8 @@ Mousetail was written because all the existing MCP Anki tools depend on the [Ank
 
 AnkiConnect is a HTTP server for Anki, it was originally created to support connecting browser extensions like [yomichan](https://ankiweb.net/shared/info/934748696) to Anki. For MCP development, it is not necessary and introduces issues:
 - introduces complexity e.g. a dedicated HTTP server for Anki occupies a port
-- introduces risk if the AnkiConnect API changes or has a bug the MCP tool will break
-- introduces an extra step all current MCP tools require installing the AnkiConnect addon
+- introduces risk e.g. if the AnkiConnect API changes or has a bug the MCP tool will break
+- introduces an extra step e.g. all current MCP tools require installing the AnkiConnect addon
 
 Mousetail has a much simpler approach. It integrates directly with Anki's [pylib](https://addon-docs.ankiweb.net/the-anki-module.html). This is a stable API that's part of Anki's core, it therefore is not subject to arbitrary or frequent change, and does not require any 3rd-party addons.
 
