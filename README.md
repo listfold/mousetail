@@ -32,15 +32,11 @@ For detailed instructions on integrating with Claude Code, Claude Desktop, and o
 
 Selectively commit what you learn in conversation with an LLM to memory
  
-> "Create a deck based on our conversation"
+> "Create a deck based on our conversation so I don't forget critical details"
 
 Use an LLM to interact with your deck
 
-> "Work through the algebra deck with me"
-
-Prompt an LLM to periodically quiz you.
-
-> "Every 10 prompts, ignore my prompts until i have worked through 5 cards"
+> "Create a card - what is a coeffcient?, create a card - id the first coefficient in this polynomial"
 
 ## Important Notes
 
