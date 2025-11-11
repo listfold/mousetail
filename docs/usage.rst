@@ -106,11 +106,6 @@ Example Use Cases
 Important Notes
 ---------------
 
-Anki Must Be Closed
-~~~~~~~~~~~~~~~~~~~
-
-The MCP server and Anki application both access the same SQLite database files directly. Because SQLite uses file-based locking, **you should close Anki before using the MCP server**. Attempting to use both simultaneously can result in "Collection is locked" errors.
-
 How Collections Are Accessed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
