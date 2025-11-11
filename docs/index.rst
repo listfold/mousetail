@@ -11,16 +11,21 @@ Mousetail is a standalone MCP (Model Context Protocol) server that enables LLMs 
 Quick Start
 -----------
 
-For installation and usage instructions, see the `README <https://github.com/listfold/mousetail/blob/main/README.md>`_.
+Run the server with:
 
-API Reference
+.. code-block:: bash
+
+   uvx mousetail
+
+For detailed installation and configuration instructions, see the :doc:`usage` guide.
+
+Documentation
 -------------
-
-The main value of this documentation is the comprehensive API reference:
 
 .. toctree::
    :maxdepth: 2
 
+   usage
    api/index
 
 Indices and tables
