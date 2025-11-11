@@ -19,7 +19,7 @@ uvx mousetail
 
 For detailed instructions on integrating with Claude Code, Claude Desktop, and other LLM tools:
 
-**[Usage Guide](https://listfold.github.io/mousetail/usage.html)**.
+**[Usage Guide](https://listfold.github.io/mousetail/usage.html)**
 
 **[API Reference](https://listfold.github.io/mousetail/api/index.html)**
 
@@ -29,17 +29,20 @@ For detailed instructions on integrating with Claude Code, Claude Desktop, and o
 - **Simple** - no configuration required, automatically discovers your Anki collections
 
 ## Use Cases
-- Selectively commit what you learn in conversation with an LLM to memory
-  > "Create an anki deck based on our conversation"
-  > "Create a card in the algebra deck"
-- Use an LLM to interact with your deck
-  > "Work through the algebra deck with me"
+
+Selectively commit what you learn in conversation with an LLM to memory
+ 
+> "Create a deck based on our conversation"
+
+Use an LLM to interact with your deck
+
+> "Work through the algebra deck with me"
+
+Prompt an LLM to periodically quiz you.
+
+> "Every 10 prompts, ignore my prompts until i have worked through 5 cards"
 
 ## Important Notes
-
-### Anki Must Be Closed
-
-The MCP server and Anki application both access the same SQLite database files directly. Because SQLite uses file-based locking, **you should close Anki before using the MCP server**. Attempting to use both simultaneously can result in "Collection is locked" errors.
 
 ### How Collections Are Accessed
 
@@ -48,7 +51,7 @@ The MCP server finds Anki collections at their standard locations:
 - **Linux:** `~/.local/share/Anki2/[Profile]/collection.anki2`
 - **Windows:** `%APPDATA%\Anki2\[Profile]\collection.anki2`
 
-You don't need to configure paths - the server automatically discovers available collections.
+You don't need to configure paths - the server automatically discovers available collections, this can be customized using configuration.
 
 ## Configuration
 
