@@ -2,30 +2,33 @@
   <img src="https://github.com/listfold/mousetail/blob/main/mousetail_transparent.png?raw=true" alt="Mousetail Logo" width="200"/>
 </div>
 
-# The simplest and most stable Anki MCP Server
+# The simplest and most stable MCP Server for Anki
 
-Selectively commit what you learn in conversation with an LLM to memory using Anki - a flashcard learning system.
-
+[![UV](https://img.shields.io/badge/Package%20Manager-UV-blueviolet)](https://docs.astral.sh/uv/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-1.21+-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**[API Documentation](https://listfold.github.io/mousetail/)** 
+Mousetail's goal is to be the simplest and most reliable way of connecting Anki to an LLM. It does not require any addons, just have anki installed and an LLM you'd like to connect to your decks.
+
+Running the server is as simple as:
+
+```bash
+uvx mousetail
+```
+
+For convenience the **[API Documentation](https://listfold.github.io/mousetail/)** includes instructions for integrating with Claude Code and Claude Desktop.
+
+### Usecases
+- Selectively commit what you learn in conversation with an LLM to memory.
+  > "Create an anki deck based on our conversation"
+  > "Create a card in the algebra deck"
+- Use an LLM to interact with your deck.
+  > "Work through the algebra deck with me"
 
 ## Features
-- Supports a minimal set of core anki operations, (CRUD & search flashcards and collections).
-- Zero dependencies, works directly with anki's fairly stable pylib api.
-- Doesn't require any addons, works with a basic anki installation.
-- Good documentation.
-
-## Installation
-
-### Prerequisites
-
-- Python 3.10 or higher
-- [UV](https://github.com/astral-sh/uv) package manager (recommended) or pip
-- Anki 2.1.50+ installed.
-- **Note:** Anki application should be closed when using the MCP server.
+- Minimal - supports core anki operations, create, read, update and delete.
+- Stable - works directly with anki's stable pylib api, no addons or deps.
 
 ## Usage
 
@@ -102,7 +105,7 @@ For the Claude Desktop application:
 
 ### Anki Must Be Closed
 
-The MCP server and Anki application both access the same SQLite database files directly. Because SQLite uses file-based locking, **you must close Anki before using the MCP server**. Attempting to use both simultaneously will result in "Collection is locked" errors.
+The MCP server and Anki application both access the same SQLite database files directly. Because SQLite uses file-based locking, **you should close Anki before using the MCP server**. Attempting to use both simultaneously can result in "Collection is locked" errors.
 
 ### How Collections Are Accessed
 
@@ -132,6 +135,19 @@ Edit `config.json` to customize settings:
 
 ## Development
 
+### Core goals
+
+Mousetail was written because all the existing MCP Anki tools depend on the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) addon.
+
+AnkiConnect is a HTTP server for Anki, it was originally created to support connecting browser extensions like [yomichan](https://ankiweb.net/shared/info/934748696) to Anki. For MCP development it is not necessary and introduces issues:
+- introduces complexity (for example a dedicated HTTP server for Anki occupies a port)
+- introduces risk - if the AnkiConnect API changes or has a bug the MCP tool will break
+- introduces an extra step - all current MCP tools require installing the AnkiConnect addon
+
+Mousetail has a much simpler approach. It integrates directly with Anki's [pylib](https://addon-docs.ankiweb.net/the-anki-module.html). This is a stable API that's part of Anki's core, it therefore is not subject to arbitrary or frequent change, and does not require any 3rd-party addons.
+
+Because it prioritizes simplicity, mousetail will remain more stable than the alternatives. The tradeoff is that Mousetail will never integrate with the Anki UI. It is also reasonable to assume that Mousetail will only ever work with colocated (same system) LLM tools and Anki decks.
+
 ### Building Documentation
 
 The project uses Sphinx with the Furo theme to generate documentation from Python docstrings.
@@ -147,11 +163,7 @@ The project uses Sphinx with the Furo theme to generate documentation from Pytho
    ```
 
 3. **View the documentation:**
-   ```bash
-   open docs/_build/html/index.html  # macOS
-   xdg-open docs/_build/html/index.html  # Linux
-   start docs/_build/html/index.html  # Windows
-   ```
+   Open `docs/_build/html/index.html` in your browser.
 
 The documentation is automatically built and deployed to GitHub Pages on every push to the main branch.
 
