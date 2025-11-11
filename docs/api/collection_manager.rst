@@ -16,8 +16,10 @@ CollectionManager Class
    :undoc-members:
    :show-inheritance:
    :special-members: __init__
+   :no-index:
 
 Global Manager Function
 -----------------------
 
 .. autofunction:: mousetail.server.collection_manager.get_manager
+   :no-index:
