@@ -63,10 +63,10 @@ async def list_decks_tool(collection_path: Optional[str] = None) -> dict:
     try:
         with manager.get_collection(collection_path) as col:
             decks = []
-            for name, did in col.decks.all_names_and_ids():
+            for deck_name_id in col.decks.all_names_and_ids():
                 decks.append({
-                    "id": did,
-                    "name": name
+                    "id": deck_name_id.id,
+                    "name": deck_name_id.name
                 })
 
             return {
@@ -120,14 +120,14 @@ async def list_note_types_tool(collection_path: Optional[str] = None) -> dict:
     try:
         with manager.get_collection(collection_path) as col:
             note_types = []
-            for name, ntid in col.models.all_names_and_ids():
+            for notetype_name_id in col.models.all_names_and_ids():
                 # Get full note type to include field information
-                notetype = col.models.get(ntid)
+                notetype = col.models.get(notetype_name_id.id)
                 fields = [field['name'] for field in notetype['flds']]
 
                 note_types.append({
-                    "id": ntid,
-                    "name": name,
+                    "id": notetype_name_id.id,
+                    "name": notetype_name_id.name,
                     "fields": fields
                 })
 
@@ -174,7 +174,7 @@ async def create_note_tool(
                 return {
                     "success": False,
                     "error": f"Note type '{note_type_name}' not found",
-                    "available_note_types": [name for name, _ in col.models.all_names_and_ids()]
+                    "available_note_types": [nt.name for nt in col.models.all_names_and_ids()]
                 }
 
             # Get deck
@@ -183,7 +183,7 @@ async def create_note_tool(
                 return {
                     "success": False,
                     "error": f"Deck '{deck_name}' not found",
-                    "available_decks": [name for name, _ in col.decks.all_names_and_ids()]
+                    "available_decks": [d.name for d in col.decks.all_names_and_ids()]
                 }
 
             # Create note
