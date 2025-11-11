@@ -38,6 +38,9 @@ Use an LLM to interact with your deck
 
 > "Create a card - what is a coeffcient?, create a card - id the first coefficient in this polynomial"
 
+Use an LLM to cleanup a deck
+> "Check my french vocab deck for correctness and correct any mistakes, typos or errors"
+
 ## Important Notes
 
 ### How Collections Are Accessed
