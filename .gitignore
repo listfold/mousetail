@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# pycharm
+.idea/
+
 # Generated docs
 docs/tools.json
 docs/_build/

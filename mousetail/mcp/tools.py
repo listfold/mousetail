@@ -20,7 +20,19 @@ async def list_collections_tool() -> dict:
         Dict with 'collections' (list of collection info) and 'count' (int).
     """
     manager = get_manager()
+
+    # Check if any collection is accessible (fail fast if Anki is running)
     collections = manager.list_available_collections()
+    if collections:
+        try:
+            # Try the first collection to check accessibility
+            manager.check_collection_accessible(collections[0]['path'])
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
     return {
         "collections": collections,
         "count": len(collections)
@@ -38,6 +50,8 @@ async def get_collection_info_tool(collection_path: Optional[str] = None) -> dic
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         info = manager.get_collection_info(collection_path)
         return {
             "success": True,
@@ -61,6 +75,8 @@ async def list_decks_tool(collection_path: Optional[str] = None) -> dict:
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             decks = []
             for deck_name_id in col.decks.all_names_and_ids():
@@ -93,6 +109,8 @@ async def create_deck_tool(deck_name: str, collection_path: Optional[str] = None
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             deck_id = col.decks.add_normal_deck_with_name(deck_name).id
             return {
@@ -118,6 +136,8 @@ async def list_note_types_tool(collection_path: Optional[str] = None) -> dict:
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             note_types = []
             for notetype_name_id in col.models.all_names_and_ids():
@@ -167,6 +187,8 @@ async def create_note_tool(
         tags = []
 
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             # Get note type
             notetype = col.models.by_name(note_type_name)
@@ -238,6 +260,8 @@ async def search_notes_tool(
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             note_ids = col.find_notes(query)
 
@@ -270,6 +294,8 @@ async def get_note_tool(note_id: int, collection_path: Optional[str] = None) -> 
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             note = col.get_note(note_id)
 
@@ -326,6 +352,8 @@ async def update_note_tool(
     """
     manager = get_manager()
     try:
+        # Check accessibility first
+        manager.check_collection_accessible(collection_path)
         with manager.get_collection(collection_path) as col:
             note = col.get_note(note_id)
 

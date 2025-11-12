@@ -84,6 +84,49 @@ class CollectionManager:
 
         return collections
 
+    def check_collection_accessible(self, path: Optional[str] = None) -> str:
+        """Check if a collection is accessible (not locked by Anki app).
+
+        Args:
+            path: Path to collection file. If None, uses default.
+
+        Returns:
+            Resolved collection path
+
+        Raises:
+            ValueError: If path is invalid or collection doesn't exist
+            AnkiError: If collection is locked or cannot be accessed
+        """
+        if path is None:
+            path = self._get_default_collection_path()
+            if path is None:
+                raise ValueError("No default collection found. Please specify a path.")
+
+        path = str(Path(path).resolve())
+
+        if not os.path.exists(path):
+            raise ValueError(f"Collection file does not exist: {path}")
+
+        # If already open in this session, it's accessible
+        with self._global_lock:
+            if path in self._collections:
+                return path
+
+        # Try to open and immediately close to check for locks
+        try:
+            test_col = Collection(path)
+            test_col.close()
+        except Exception as e:
+            error_msg = str(e).lower()
+            if "already open" in error_msg or "syncing" in error_msg or "locked" in error_msg:
+                raise AnkiError(
+                    "Cannot access Anki database: The Anki application is currently running. "
+                    "Please close Anki completely and try again."
+                )
+            raise AnkiError(f"Failed to access collection: {e}")
+
+        return path
+
     def open_collection(self, path: Optional[str] = None) -> str:
         """Open a collection and return its path identifier.
 
@@ -114,6 +157,12 @@ class CollectionManager:
                     self._collections[path] = col
                     self._locks[path] = threading.RLock()
                 except Exception as e:
+                    error_msg = str(e).lower()
+                    if "already open" in error_msg or "syncing" in error_msg or "locked" in error_msg:
+                        raise AnkiError(
+                            "Cannot access Anki database: The Anki application is currently running. "
+                            "Please close Anki completely and try again."
+                        )
                     raise AnkiError(f"Failed to open collection: {e}")
 
         return path
