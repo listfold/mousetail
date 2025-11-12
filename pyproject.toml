@@ -1,6 +1,6 @@
 [project]
 name = "mousetail"
-version = "0.1.2"
+version = "0.1.3"
 description = "Standalone MCP server that enables LLMs like Claude to interact with Anki flashcard collections using Anki's Python library"
 readme = "README.md"
 requires-python = ">=3.10"
