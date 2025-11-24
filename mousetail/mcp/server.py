@@ -21,6 +21,10 @@ from mousetail.mcp.tools import (
     update_note_tool,
     create_deck_tool,
     get_collection_info_tool,
+    save_sync_credentials_tool,
+    load_sync_credentials_tool,
+    delete_sync_credentials_tool,
+    sync_collection_tool,
 )
 
 
@@ -241,6 +245,77 @@ class AnkiMCPServer:
                         "required": ["note_id"]
                     }
                 ),
+                Tool(
+                    name="save_sync_credentials",
+                    description="Save sync credentials securely to system keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service)",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "description": "AnkiWeb ID or sync server username"
+                            },
+                            "password": {
+                                "type": "string",
+                                "description": "Account password"
+                            },
+                            "endpoint": {
+                                "type": "string",
+                                "description": "Sync server URL (optional). Leave empty for AnkiWeb. Example: https://sync.example.com"
+                            }
+                        },
+                        "required": ["username", "password"]
+                    }
+                ),
+                Tool(
+                    name="load_sync_credentials",
+                    description="Load saved sync credentials from system keychain",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                ),
+                Tool(
+                    name="delete_sync_credentials",
+                    description="Delete saved sync credentials from system keychain",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                ),
+                Tool(
+                    name="sync_collection",
+                    description="Synchronize Anki collection with AnkiWeb or a self-hosted sync server. Uploads local changes and downloads remote changes. By default syncs both collection data and media files.",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "description": "AnkiWeb ID or sync server username (optional if saved)"
+                            },
+                            "password": {
+                                "type": "string",
+                                "description": "Account password (optional if saved)"
+                            },
+                            "endpoint": {
+                                "type": "string",
+                                "description": "Sync server URL (optional). Leave empty for AnkiWeb. Example: https://sync.example.com"
+                            },
+                            "sync_media": {
+                                "type": "boolean",
+                                "description": "Include media files (images, audio) in sync (default: true)",
+                                "default": True
+                            },
+                            "collection_path": {
+                                "type": "string",
+                                "description": "Path to collection file (optional)"
+                            }
+                        },
+                        "required": []
+                    }
+                ),
             ]
 
         @self.server.call_tool()
@@ -303,6 +378,24 @@ class AnkiMCPServer:
                         arguments["note_id"],
                         arguments.get("fields"),
                         arguments.get("tags"),
+                        arguments.get("collection_path")
+                    )
+                elif name == "save_sync_credentials":
+                    result = await save_sync_credentials_tool(
+                        arguments["username"],
+                        arguments["password"],
+                        arguments.get("endpoint")
+                    )
+                elif name == "load_sync_credentials":
+                    result = await load_sync_credentials_tool()
+                elif name == "delete_sync_credentials":
+                    result = await delete_sync_credentials_tool()
+                elif name == "sync_collection":
+                    result = await sync_collection_tool(
+                        arguments.get("username"),
+                        arguments.get("password"),
+                        arguments.get("endpoint"),
+                        arguments.get("sync_media", True),
                         arguments.get("collection_path")
                     )
                 else:

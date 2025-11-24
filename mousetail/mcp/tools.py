@@ -6,6 +6,8 @@ can call to interact with Anki collections.
 """
 
 import json
+import keyring
+from pathlib import Path
 from typing import Optional
 from mousetail.server.collection_manager import get_manager
 
@@ -387,6 +389,286 @@ async def update_note_tool(
                 "success": True,
                 "message": "Note updated successfully"
             }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# Sync-related helper functions and tools
+
+KEYRING_SERVICE_NAME = "mousetail-anki-sync"
+
+
+def _load_config() -> dict:
+    """Load configuration from config.json.
+
+    Returns:
+        Dict with configuration data, or empty dict if file doesn't exist.
+    """
+    try:
+        # Look for config.json in the project root
+        config_path = Path(__file__).parent.parent.parent / "config.json"
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+
+def _get_sync_endpoint_from_config() -> Optional[str]:
+    """Get the preferred sync endpoint from config.
+
+    Returns:
+        Endpoint URL string or None for AnkiWeb.
+    """
+    config = _load_config()
+    return config.get("sync", {}).get("endpoint")
+
+
+async def save_sync_credentials_tool(
+    username: str,
+    password: str,
+    endpoint: Optional[str] = None
+) -> dict:
+    """Save sync credentials securely to system keychain.
+
+    Stores credentials using the system's secure credential storage:
+    - macOS: Keychain
+    - Windows: Credential Manager
+    - Linux: Secret Service (GNOME Keyring, KWallet, etc.)
+
+    Args:
+        username: AnkiWeb ID or sync server username.
+        password: Account password.
+        endpoint: Optional sync server URL (saved separately). Leave empty for AnkiWeb.
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str) or 'error' (str).
+    """
+    try:
+        # Save username and password to keychain
+        keyring.set_password(KEYRING_SERVICE_NAME, "username", username)
+        keyring.set_password(KEYRING_SERVICE_NAME, username, password)
+
+        # Save endpoint if provided
+        if endpoint:
+            keyring.set_password(KEYRING_SERVICE_NAME, "endpoint", endpoint)
+        else:
+            # Clear endpoint if None (use AnkiWeb)
+            try:
+                keyring.delete_password(KEYRING_SERVICE_NAME, "endpoint")
+            except keyring.errors.PasswordDeleteError:
+                pass
+
+        endpoint_msg = f" with endpoint '{endpoint}'" if endpoint else " for AnkiWeb"
+        return {
+            "success": True,
+            "message": f"Credentials saved securely for user '{username}'{endpoint_msg}"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Failed to save credentials: {str(e)}"
+        }
+
+
+async def load_sync_credentials_tool() -> dict:
+    """Load saved sync credentials from system keychain.
+
+    Returns:
+        Dict with 'success' (bool), 'username' (str), 'password' (str),
+        'endpoint' (str or None), or 'error' (str).
+    """
+    try:
+        # Load username
+        username = keyring.get_password(KEYRING_SERVICE_NAME, "username")
+        if not username:
+            return {
+                "success": False,
+                "error": "No saved credentials found. Use save_sync_credentials first."
+            }
+
+        # Load password
+        password = keyring.get_password(KEYRING_SERVICE_NAME, username)
+        if not password:
+            return {
+                "success": False,
+                "error": f"Password not found for user '{username}'"
+            }
+
+        # Load endpoint (may be None for AnkiWeb)
+        endpoint = keyring.get_password(KEYRING_SERVICE_NAME, "endpoint")
+
+        return {
+            "success": True,
+            "username": username,
+            "password": password,
+            "endpoint": endpoint
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Failed to load credentials: {str(e)}"
+        }
+
+
+async def delete_sync_credentials_tool() -> dict:
+    """Delete saved sync credentials from system keychain.
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str) or 'error' (str).
+    """
+    try:
+        # Get username first
+        username = keyring.get_password(KEYRING_SERVICE_NAME, "username")
+
+        if username:
+            # Delete password
+            try:
+                keyring.delete_password(KEYRING_SERVICE_NAME, username)
+            except keyring.errors.PasswordDeleteError:
+                pass
+
+            # Delete username
+            try:
+                keyring.delete_password(KEYRING_SERVICE_NAME, "username")
+            except keyring.errors.PasswordDeleteError:
+                pass
+
+        # Delete endpoint
+        try:
+            keyring.delete_password(KEYRING_SERVICE_NAME, "endpoint")
+        except keyring.errors.PasswordDeleteError:
+            pass
+
+        return {
+            "success": True,
+            "message": "Credentials deleted successfully"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Failed to delete credentials: {str(e)}"
+        }
+
+
+async def sync_collection_tool(
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    endpoint: Optional[str] = None,
+    sync_media: bool = True,
+    collection_path: Optional[str] = None
+) -> dict:
+    """Synchronize Anki collection with AnkiWeb or a self-hosted sync server.
+
+    This tool uploads local changes and downloads remote changes to keep your
+    collection in sync. By default, it syncs both the collection data (cards,
+    notes, decks) and media files (images, audio).
+
+    Authentication priority:
+    1. Credentials passed as parameters
+    2. Saved credentials from keychain
+    3. Error if no credentials available
+
+    Endpoint priority:
+    1. Endpoint parameter (if provided)
+    2. Saved endpoint from keychain
+    3. Endpoint from config.json
+    4. AnkiWeb (default)
+
+    Args:
+        username: AnkiWeb ID or sync server username (optional if saved).
+        password: Account password (optional if saved).
+        endpoint: Sync server URL (optional). Examples:
+                  - None or empty: Use AnkiWeb (default)
+                  - "https://sync.example.com": Use self-hosted server
+        sync_media: Include media files in sync (default: True).
+        collection_path: Path to collection file (optional, uses default if not provided).
+
+    Returns:
+        Dict with 'success' (bool), 'message' (str), 'required' (str) or 'error' (str).
+    """
+    manager = get_manager()
+
+    try:
+        # Determine credentials to use
+        if not username or not password:
+            # Try to load from keychain
+            creds_result = await load_sync_credentials_tool()
+            if not creds_result.get("success"):
+                return {
+                    "success": False,
+                    "error": "No credentials provided and no saved credentials found",
+                    "required": "Please provide username and password, or use save_sync_credentials first"
+                }
+
+            username = username or creds_result.get("username")
+            password = password or creds_result.get("password")
+
+            # Use saved endpoint if not provided
+            if endpoint is None and creds_result.get("endpoint"):
+                endpoint = creds_result.get("endpoint")
+
+        # Determine endpoint to use
+        if endpoint is None:
+            # Try config.json
+            endpoint = _get_sync_endpoint_from_config()
+
+        # Convert empty string to None (for AnkiWeb)
+        if endpoint == "":
+            endpoint = None
+
+        # Check collection accessibility
+        manager.check_collection_accessible(collection_path)
+
+        with manager.get_collection(collection_path) as col:
+            # Authenticate
+            try:
+                auth = col.sync_login(username, password, endpoint)
+            except Exception as e:
+                error_msg = str(e)
+                if "authentication" in error_msg.lower() or "invalid" in error_msg.lower():
+                    return {
+                        "success": False,
+                        "error": f"Authentication failed: {error_msg}",
+                        "hint": "Please check your username and password"
+                    }
+                elif "network" in error_msg.lower() or "connection" in error_msg.lower():
+                    return {
+                        "success": False,
+                        "error": f"Network error: {error_msg}",
+                        "hint": "Please check your internet connection and endpoint URL"
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "error": f"Login failed: {error_msg}"
+                    }
+
+            # Perform sync
+            try:
+                output = col.sync_collection(auth, sync_media=sync_media)
+
+                # Parse sync output
+                endpoint_str = f" with {endpoint}" if endpoint else " with AnkiWeb"
+                media_str = " (including media)" if sync_media else " (collection only)"
+
+                return {
+                    "success": True,
+                    "message": f"Collection synced successfully{endpoint_str}{media_str}",
+                    "output": str(output)
+                }
+            except Exception as e:
+                error_msg = str(e)
+                return {
+                    "success": False,
+                    "error": f"Sync failed: {error_msg}",
+                    "hint": "Check for conflicts or try syncing from Anki desktop first"
+                }
+
     except Exception as e:
         return {
             "success": False,

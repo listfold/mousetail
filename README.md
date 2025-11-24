@@ -41,6 +41,92 @@ Use an LLM to interact with your deck
 Use an LLM to cleanup a deck
 > "Check my french vocab deck for correctness and correct any mistakes, typos or errors"
 
+## Syncing
+
+Mousetail supports synchronizing your Anki collection with AnkiWeb or a self-hosted sync server. This allows you to keep your collection in sync across devices.
+
+### Quick Start
+
+Sync with AnkiWeb (saves credentials for future syncs):
+```
+> "Save my AnkiWeb credentials: username is myuser@example.com and password is mypassword"
+> "Sync my collection with AnkiWeb"
+```
+
+### Credential Management
+
+Mousetail stores credentials securely in your system's credential manager:
+- **macOS:** Keychain
+- **Windows:** Credential Manager
+- **Linux:** Secret Service (GNOME Keyring, KWallet, etc.)
+
+Available credential tools:
+- `save_sync_credentials` - Save username/password securely
+- `load_sync_credentials` - Load saved credentials
+- `delete_sync_credentials` - Remove saved credentials
+
+### Sync Options
+
+The `sync_collection` tool supports:
+- **AnkiWeb sync** (default) - Leave endpoint empty
+- **Self-hosted servers** - Provide custom endpoint URL (e.g., `https://sync.example.com`)
+- **Media sync** - Enabled by default, includes images and audio files
+- **Collection-only sync** - Set `sync_media: false` to skip media
+
+### Examples
+
+**First-time setup with AnkiWeb:**
+```
+> "Save my sync credentials for AnkiWeb - username: user@example.com, password: mypass123"
+> "Sync my collection"
+```
+
+**Using a self-hosted server:**
+```
+> "Save my sync credentials - username: john, password: secret, endpoint: https://sync.myserver.com"
+> "Sync my collection"
+```
+
+**One-time sync without saving credentials:**
+```
+> "Sync my collection with AnkiWeb using username user@example.com and password mypass123"
+```
+
+**Collection-only sync (skip media):**
+```
+> "Sync my collection but don't sync media files"
+```
+
+### Configuration
+
+You can set a default sync endpoint in `config.json`:
+```json
+{
+  "sync": {
+    "endpoint": "https://sync.example.com"
+  }
+}
+```
+
+Leave `endpoint` as `null` to use AnkiWeb by default.
+
+### Important Notes
+
+- **Close Anki first:** Sync will fail if the Anki application is running
+- **Media sync:** Media sync is slower and uses more bandwidth but ensures images/audio are synced
+- **Conflicts:** If conflicts occur, try syncing from Anki desktop first to resolve them
+- **Security:** Credentials are never stored in plain text - they're kept in your system's secure credential storage
+
+### Self-Hosted Sync Server Setup
+
+To sync with your own server:
+1. Set up an [Anki sync server](https://docs.ankiweb.net/sync-server.html)
+2. Configure credentials on the server (using environment variables like `SYNC_USER1=user:password`)
+3. Save your credentials in Mousetail with the server endpoint
+4. Sync normally
+
+For detailed sync server setup, see the [official Anki documentation](https://docs.ankiweb.net/sync-server.html).
+
 ## Important Notes
 
 ### How Collections Are Accessed
@@ -57,6 +143,50 @@ You don't need to configure paths - the server automatically discovers available
 The server can be customized through a `config.json` file. See the **[Usage Guide](https://listfold.github.io/mousetail/usage.html)** for configuration options.
 
 ## Development
+
+### Local Development Setup
+
+To develop and test Mousetail locally with Claude Code:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/listfold/mousetail.git
+   cd mousetail
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   uv sync
+   ```
+
+3. **Configure Claude Code:**
+   The project includes a `.mcp.json` file that configures the MCP server for local development:
+   ```json
+   {
+     "mcpServers": {
+       "mousetail": {
+         "type": "stdio",
+         "command": "uv",
+         "args": ["run", "python", "-m", "mousetail.mcp.stdio_server"],
+         "env": {
+           "PYTHONUNBUFFERED": "1"
+         }
+       }
+     }
+   }
+   ```
+
+4. **Restart Claude Code:**
+   After the configuration is in place, restart Claude Code to load the MCP server.
+
+5. **Verify the server:**
+   - Use `/context` in Claude Code to see available MCP tools
+   - The mousetail server should appear with all available tools (list_collections, create_note, sync_collection, etc.)
+
+6. **Testing sync functionality:**
+   - Close the Anki desktop application before testing
+   - Test credential management: `save_sync_credentials`, `load_sync_credentials`, `delete_sync_credentials`
+   - Test sync: `sync_collection` with your AnkiWeb credentials or self-hosted server
 
 ### Core goals
 

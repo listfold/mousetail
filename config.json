@@ -6,5 +6,8 @@
   "logging": {
     "level": "INFO",
     "file": null
+  },
+  "sync": {
+    "endpoint": null
   }
 }
