@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mousetail": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "-m", "mousetail.mcp.stdio_server"],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}
